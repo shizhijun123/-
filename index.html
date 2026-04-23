@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新城道小学数字资源库</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft Yahei", sans-serif;
+        }
+
+        body {
+            background: linear-gradient(120deg, #e6f0ff, #f0f7ff);
+            background-attachment: fixed;
+            padding: 20px;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        header {
+            max-width: 1100px;
+            margin: 30px auto 60px;
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .logo {
+            width: 100px;
+            height: 100px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #1a3b68;
+            border: 1px solid #c8d8f0;
+            box-shadow: 0 4px 12px rgba(0, 30, 80, 0.07);
+            flex-shrink: 0;
+        }
+
+        .header-text {
+            flex: 1;
+        }
+
+        header h1 {
+            font-size: 32px;
+            color: #1a3b68;
+            margin-bottom: 14px;
+            font-weight: bold;
+        }
+
+        .desc {
+            font-size: 15px;
+            color: #333;
+            line-height: 1.75;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(6px);
+            padding: 18px 22px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 30, 80, 0.05);
+        }
+
+        .nav-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 35px;
+        }
+
+        .nav-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(5px);
+            border-radius: 18px;
+            padding: 45px 25px;
+            text-align: center;
+            box-shadow: 0 6px 18px rgba(0, 30, 80, 0.06);
+            text-decoration: none;
+            transition: all 0.4s ease;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+
+        .nav-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(26, 59, 104, 0.12);
+            background-color: #ffffff;
+        }
+
+        .nav-card h3 {
+            font-size: 22px;
+            color: #1a3b68;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .nav-card p {
+            font-size: 14px;
+            color: #555;
+        }
+
+        @media (max-width: 650px) {
+            header {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <img src="logo.png" class="logo" alt="新城道小学">
+        <div class="header-text">
+            <h1>新城道小学数字资源库</h1>
+            <div class="desc">
+                唐山市丰润区新城道小学数字资源库，结合学校“幸福教育”特色搭建，涵盖全学科同步课件、可视化教学等资源，适配新课标与各年级学情，支持多终端访问，便捷服务师生教学与自主学习，助力教育数字化提质。
+            </div>
+        </div>
+    </header>
+
+    <div class="nav-container">
+        <!-- 语文 -->
+        <a href="yuwen.html" class="nav-card" target="_blank">
+            <h3>语文资源</h3>
+            <p>课文朗读、生字学习、阅读写作</p>
+        </a>
+        <!-- 数学 -->
+        <a href="shuxue.html" class="nav-card" target="_blank">
+            <h3>数学资源</h3>
+            <p>口算练习、同步习题、数学思维</p>
+        </a>
+        <!-- 英语 -->
+        <a href="yingyu.html" class="nav-card" target="_blank">
+            <h3>英语资源</h3>
+            <p>单词跟读、听力练习、英语动画</p>
+        </a>
+        <!-- 编程 -->
+        <a href="coding.html" class="nav-card" target="_blank">
+            <h3>编程资源</h3>
+            <p>学生作品展示、编程入门</p>
+        </a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>几何维度变换演示</title>
+    <script src="https://cdn.geogebra.org/apps/deployggb.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .header p {
+            margin: 5px 0 0;
+            font-size: 14px;
+        }
+
+        .main-content-area {
+            display: flex;
+            flex-direction: column;
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .ggb-container {
+            width: 100%;
+            height: 500px;
+        }
+
+        .control-panel {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .control-group {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            margin-bottom: 15px;
+            flex: 1;
+            min-width: 200px;
+            margin: 5px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Noto Sans SC', sans-serif;
+            font-weight: 500;
+            margin: 5px;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .slider-container {
+            margin: 15px 0;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        input[type="range"] {
+            width: 100%;
+        }
+
+        .dimension-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .stage-indicator {
+            display: flex;
+            justify-content: space-around;
+            margin: 15px 0;
+        }
+
+        .stage {
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+            flex: 1;
+            margin: 0 5px;
+            background: #e9ecef;
+            transition: all 0.3s;
+        }
+
+        .stage.active {
+            background: #11998e;
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1><i class="fas fa-cube"></i> 几何维度变换演示</h1>
+        <p>从点到线，从线到面，从面到体的几何变换</p>
+    </div>
+    <main class="main-content-area">
+        <div class="stage-indicator">
+            <div class="stage" id="stage-point">点 (0D)</div>
+            <div class="stage" id="stage-line">线 (1D)</div>
+            <div class="stage" id="stage-plane">面 (2D)</div>
+            <div class="stage" id="stage-solid">体 (3D)</div>
+        </div>
+        <div class="viewer-container card">
+            <div id="ggb-element" class="ggb-container"></div>
+        </div>
+        <div class="control-panel">
+            <div class="control-group">
+                <h3>变换控制</h3>
+                <div class="slider-container">
+                    <label for="transformSlider">变换进度: <span id="transformValue">0%</span></label>
+                    <input type="range" id="transformSlider" , min="0" , max="300" , value="0" , step="1">
+                </div>
+                <button id="autoBtn"><i class="fas fa-play"></i> 自动演示</button>
+                <button id="resetBtn"><i class="fas fa-undo"></i> 重置</button>
+            </div>
+            <div class="control-group">
+                <h3>阶段控制</h3>
+                <button id="toPointBtn"><i class="fas fa-circle"></i> 点阶段</button>
+                <button id="toLineBtn"><i class="fas fa-slash"></i> 线阶段</button>
+                <button id="toPlaneBtn"><i class="fas fa-square"></i> 面阶段</button>
+                <button id="toSolidBtn"><i class="fas fa-cube"></i> 体阶段</button>
+            </div>
+            <div class="control-group">
+                <h3>说明</h3>
+                <div class="dimension-info">
+                    <p><strong>点 → 线 (0D→1D):</strong> 点沿x轴移动形成线段</p>
+                    <p><strong>线 → 面 (1D→2D):</strong> 线段沿y轴移动形成矩形</p>
+                    <p><strong>面 → 体 (2D→3D):</strong> 矩形沿z轴移动形成长方体</p>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script>
+        var parameters = {
+            "appName": "3d",
+            "width": 800,
+            "height": 500,
+            "borderColor": "#FFFFFF",
+            "borderRadius": "12px",
+            "showToolBar": true,
+            "showAlgebraInput": false,
+            "showMenuBar": false,
+            "allowStyleBar": true,
+            "enable3d": true,
+            "language": "zh-CN",
+            "appletOnLoad": function (api) {
+                window.ggbApp = api;
+                initialize();
+            }
+        };
+
+        var applet = new GGBApplet(parameters, true);
+        window.addEventListener("load", function () {
+            applet.inject("ggb-element");
+        });
+
+        var isAutoPlaying = false;
+        var animationInterval;
+        var currentStage = 0; // 0:点, 1:线, 2:面, 3:体
+
+        function initialize() {
+            ggbApp.evalCommand(`ShowAxes[3,false]`);
+            ggbApp.setVisible("xOyPlane", false);
+            ggbApp.evalCommand('SetPerspective("T")');
+            // 创建原始点
+            ggbApp.evalCommand("P = (0, 0, 0)");
+            //ggbApp.evalCommand("SetVisibleInView(P, -1,false)");
+            //ggbApp.setColor("P", 255, 0, 0);
+            ggbApp.setColor("P", 200, 100, 0);
+            //ggbApp.setPointStyle("P", 5);
+            //ggbApp.setLabelStyle("P", 0);
+
+            // 创建线的终点
+            ggbApp.evalCommand("P1 = (0, 0, 0)");
+            ggbApp.setVisible("P1", false);
+            ggbApp.setColor("P1", 200, 100, 0);
+
+            // 创建线
+            ggbApp.evalCommand("line = Segment(P, P1)");
+            //ggbApp.setColor("line", 0, 100, 200);
+            ggbApp.setColor("line", 200, 100, 0);
+            ggbApp.setLineThickness("line", 3);
+            ggbApp.setVisible("line", false);
+
+            // 创建面的顶点
+            ggbApp.evalCommand("P2 = (0, 0, 0)");
+            ggbApp.evalCommand("P3 = (0, 0, 0)");
+            ggbApp.evalCommand("line1= Segment(P2, P3)");
+            ggbApp.setVisible("P2", false);
+            ggbApp.setVisible("P3", false);
+            ggbApp.setColor("line1", 200, 100, 0);
+            ggbApp.setLineThickness("line1", 3);
+            ggbApp.setVisible("line1", false);
+
+            // 创建面
+            ggbApp.evalCommand("plane = Polygon(P, P1, P2, P3)");
+            //ggbApp.setColor("plane", 0, 200, 100);
+            ggbApp.setColor("plane", 200, 100, 0);
+            ggbApp.setFilling("plane", 0.2);
+            ggbApp.setVisible("plane", false);
+
+            // 创建体的顶点
+            ggbApp.evalCommand("P4 = (0, 0, 0)");
+            ggbApp.evalCommand("P5 = (0, 0, 0)");
+            ggbApp.evalCommand("P6 = (0, 0, 0)");
+            ggbApp.evalCommand("P7 = (0, 0, 0)");
+            ggbApp.setVisible("P4", false);
+            ggbApp.setVisible("P5", false);
+            ggbApp.setVisible("P6", false);
+            ggbApp.setVisible("P7", false);
+
+            // 创建体 - 使用棱柱(Prism)命令代替Polyhedron
+            ggbApp.evalCommand("base = Polygon(P, P1, P2, P3)");
+            ggbApp.setVisible("base", false);
+            ggbApp.evalCommand("solid = Prism(base, 0)");
+            ggbApp.setColor("solid", 200, 100, 0);
+            ggbApp.setFilling("solid", 0.1);
+            ggbApp.setVisible("solid", false);
+            ggbApp.setVisible("A", false);
+            ggbApp.setVisible("B", false);
+            ggbApp.setVisible("C", false);
+            ggbApp.setVisible("D", false);
+
+            // 设置控制面板事件
+            document.getElementById("transformSlider").addEventListener("input", function () {
+                var value = parseInt(this.value);
+                document.getElementById("transformValue").textContent = value + "%";
+                updateTransformation(value);
+            });
+
+            document.getElementById("autoBtn").addEventListener("click", function () {
+                if (isAutoPlaying) {
+                    stopAnimation();
+                    this.innerHTML = '<i class="fas fa-play"></i> 自动演示';
+                } else {
+                    startAnimation();
+                    this.innerHTML = '<i class="fas fa-stop"></i> 停止';
+                }
+            });
+
+            document.getElementById("resetBtn").addEventListener("click", function () {
+                stopAnimation();
+                document.getElementById("autoBtn").innerHTML = '<i class="fas fa-play"></i> 自动演示';
+                document.getElementById("transformSlider").value = 0;
+                document.getElementById("transformValue").textContent = "0%";
+                updateTransformation(0);
+            });
+
+            // 阶段控制按钮
+            document.getElementById("toPointBtn").addEventListener("click", function () {
+                goToStage(0);
+            });
+
+            document.getElementById("toLineBtn").addEventListener("click", function () {
+                goToStage(100);
+            });
+
+            document.getElementById("toPlaneBtn").addEventListener("click", function () {
+                goToStage(200);
+            });
+
+            document.getElementById("toSolidBtn").addEventListener("click", function () {
+                goToStage(300);
+            });
+
+            // 初始状态
+            updateStageIndicator(0);
+        }
+
+        function updateTransformation(value) {
+            // 根据滑块值更新几何图形
+            if (value == 0) {
+                currentStage = 0;
+            } else if (value <= 100) {
+                // 点→线阶段 (0-100)
+                currentStage = 1;
+                var x = value / 100 * 3; // 线长3单位
+
+                ggbApp.setVisible("P", true);
+                ggbApp.setVisible("P1", true);
+                ggbApp.setVisible("line", value > 0);
+                ggbApp.setVisible("plane", false);
+                ggbApp.setVisible("solid", false);
+
+                ggbApp.evalCommand("SetValue(P1, (" + x + ", 0, 0))");
+
+            } else if (value <= 200) {
+                // 线→面阶段 (101-200)
+                currentStage = 2;
+                var y = (value - 100) / 100 * 2; // 面宽2单位
+
+                ggbApp.setVisible("P", false);
+                ggbApp.setVisible("P1", false);
+                ggbApp.setVisible("line", true);
+                ggbApp.setVisible("line1", true);
+                ggbApp.setVisible("plane", value > 100);
+                ggbApp.setVisible("solid", false);
+
+                ggbApp.evalCommand("SetValue(P1, (3, 0, 0))");
+                ggbApp.evalCommand("SetValue(P2, (3, " + y + ", 0))");
+                ggbApp.evalCommand("SetValue(P3, (0, " + y + ", 0))");
+
+                // 更新棱柱底面
+                ggbApp.evalCommand("SetValue(base, Polygon(P, P1, P2, P3))");
+
+            } else {
+                // 面→体阶段 (201-300)
+                currentStage = 3;
+                var z = (value - 200) / 100 * 1.5; // 体高1.5单位
+                ggbApp.setVisible("P1", false);
+                ggbApp.setVisible("P", false);
+                ggbApp.setVisible("line", false);
+                ggbApp.setVisible("line1", false);
+                ggbApp.setVisible("plane", true);
+                ggbApp.setVisible("solid", value > 200);
+
+                ggbApp.evalCommand("SetValue(P1, (3, 0, 0))");
+                ggbApp.evalCommand("SetValue(P2, (3, 2, 0))");
+                ggbApp.evalCommand("SetValue(P3, (0, 2, 0))");
+
+                // 更新棱柱高度
+                ggbApp.evalCommand("solid=Prism(base, " + z + ")");
+            }
+
+            updateStageIndicator(currentStage);
+        }
+
+        function startAnimation() {
+            isAutoPlaying = true;
+            var slider = document.getElementById("transformSlider");
+            var currentValue = parseInt(slider.value);
+
+            animationInterval = setInterval(function () {
+                currentValue = (currentValue + 1) % 301;
+                slider.value = currentValue;
+                document.getElementById("transformValue").textContent = currentValue + "%";
+                updateTransformation(currentValue);
+
+                if (currentValue === 300) {
+                    // 到达终点后暂停
+                    setTimeout(stopAnimation, 10);
+                    document.getElementById("autoBtn").innerHTML = '<i class="fas fa-play"></i> 自动演示';
+                }
+            }, 40);
+        }
+
+        function stopAnimation() {
+            isAutoPlaying = false;
+            clearInterval(animationInterval);
+        }
+
+        function goToStage(targetValue) {
+            stopAnimation();
+            document.getElementById("transformSlider").value = targetValue;
+            document.getElementById("transformValue").textContent = targetValue + "%";
+            updateTransformation(targetValue);
+            document.getElementById("autoBtn").innerHTML = '<i class="fas fa-play"></i> 自动演示';
+        }
+
+        function updateStageIndicator(stage) {
+            // 更新阶段指示器
+            document.getElementById("stage-point").classList.remove("active");
+            document.getElementById("stage-line").classList.remove("active");
+            document.getElementById("stage-plane").classList.remove("active");
+            document.getElementById("stage-solid").classList.remove("active");
+
+            if (stage === 0) {
+                document.getElementById("stage-point").classList.add("active");
+            } else if (stage === 1) {
+                document.getElementById("stage-line").classList.add("active");
+            } else if (stage === 2) {
+                document.getElementById("stage-plane").classList.add("active");
+            } else {
+                document.getElementById("stage-solid").classList.add("active");
+            }
+        }
+    </script>
+</body>
+
+</html>

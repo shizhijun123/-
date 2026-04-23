@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>编程作品展示</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft Yahei", sans-serif;
+        }
+        body {
+            background: #f5f7fa;
+            padding: 40px 20px;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        h1 {
+            font-size: 26px;
+            color: #2c3e50;
+        }
+        .card-box {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+        }
+        .item {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            text-decoration: none;
+            color: #333;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            transition: 0.3s;
+        }
+        .item:hover {
+            transform: translateY(-4px);
+            background: #e3f2fd;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>编程作品展示</h1>
+    </header>
+
+    <div class="card-box">
+        <a class="item" href="works/mBot2巡线小车制作流程图.html" target="_blank">
+            <h3>避障小车</h3>
+        </a>
+        <a class="item" href="works/少儿编程启蒙乐园.html" target="_blank">
+            <h3>少儿编程乐园</h3>
+        </a>
+        <a class="item" href="works/小学生编程小课堂.html" target="_blank">
+            <h3>小学生编程小课堂</h3>
+        </a>
+    </div>
+</body>
+</html>

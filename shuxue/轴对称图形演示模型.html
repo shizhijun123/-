@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>轴对称图形演示模型</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Arial', sans-serif;
+            background-color: #e8f4f8;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        h1 {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 36px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .container {
+            position: relative;
+            width: 1602px;
+            height: 802px;
+            margin: 20px auto;
+            perspective: 1000px;
+            border: 2px solid #333;
+            background-color: white;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+        
+        #centerLine {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            width: 4px;
+            height: 100%;
+            background-color: #666;
+            z-index: 2;
+        }
+        
+        canvas {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 800px;
+            height: 800px;
+            transition: transform 0.8s ease-in-out;
+            touch-action: none;
+        }
+        
+        #rightCanvas {
+            left: 800px;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f0f8ff;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 1200px;
+        }
+        
+        .color-picker {
+            display: flex;
+            gap: 10px;
+            padding: 15px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .color-option {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        
+        .color-option:hover {
+            transform: scale(1.1);
+        }
+        
+        .selected {
+            border-color: #000 !important;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+        }
+        
+        button {
+            padding: 12px 25px;
+            font-size: 16px;
+            cursor: pointer;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            background-color: #4a86e8;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        #eraser {
+            background-color: #ff5722;
+        }
+        
+        #foldBtn {
+            background-color: #2196F3;
+        }
+        
+        #saveBtn {
+            background-color: #4CAF50;
+        }
+        
+        .brush-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px 25px;
+            background-color: white;
+            border-radius: 30px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        input[type="range"] {
+            width: 120px;
+            height: 6px;
+            background-color: #ddd;
+            border-radius: 3px;
+        }
+        
+        .tool-tip {
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <h1>轴对称图形演示模型</h1>
+    
+    <div class="controls">
+        <div class="color-picker">
+            <div class="color-option selected" style="background-color: #FF6B6B" data-color="#FF6B6B"></div>
+            <div class="color-option" style="background-color: #4ECDC4" data-color="#4ECDC4"></div>
+            <div class="color-option" style="background-color: #FFD166" data-color="#FFD166"></div>
+            <div class="color-option" style="background-color: #6A4C93" data-color="#6A4C93"></div>
+            <div class="color-option" style="background-color: #000000" data-color="#000000"></div> <!-- 黑色 -->
+        </div>
+        
+        <div class="brush-control">
+            <span class="tool-tip">画笔大小</span>
+            <input type="range" id="brushSize" min="1" max="50" value="4">
+            <span id="brushSizeValue">4px</span>
+        </div>
+        
+        <button id="clearBtn">
+            <span>清除</span>
+            <span>🗑️</span>
+        </button>
+        
+        <button id="eraser">
+            <span>橡皮擦</span>
+            <span>🧻</span>
+        </button>
+        
+        <button id="foldBtn">
+            <span>折叠</span>
+            <span>🧺</span>
+        </button>
+        
+        <button id="saveBtn">
+            <span>保存</span>
+            <span>💾</span>
+        </button>
+    </div>
+
+    <div class="container">
+        <div id="centerLine"></div>
+        <canvas id="leftCanvas" width="800" height="800"></canvas>
+        <canvas id="rightCanvas" width="800" height="800"></canvas>
+    </div>
+
+    <script>
+        const leftCanvas = document.getElementById('leftCanvas');
+        const rightCanvas = document.getElementById('rightCanvas');
+        const ctxLeft = leftCanvas.getContext('2d');
+        const ctxRight = rightCanvas.getContext('2d');
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
+        let currentColor = '#FF6B6B';
+        let isErasing = false;
+
+        function initCanvas() {
+            const brushSize = document.getElementById('brushSize').value;
+            [ctxLeft, ctxRight].forEach(ctx => {
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.lineWidth = brushSize;
+                ctx.strokeStyle = currentColor;
+            });
+        }
+
+        function getCanvasPosition(e) {
+            const rect = leftCanvas.getBoundingClientRect();
+            let clientX, clientY;
+            
+            if (e.touches) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            } else {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+            
+            const x = Math.max(0, Math.min(clientX - rect.left, leftCanvas.width));
+            const y = Math.max(0, Math.min(clientY - rect.top, leftCanvas.height));
+            
+            return {x, y};
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            
+            const pos = getCanvasPosition(e);
+            const x = pos.x;
+            const y = pos.y;
+
+            if(isErasing) {
+                const size = ctxLeft.lineWidth;
+                ctxLeft.globalCompositeOperation = 'destination-out';
+                ctxLeft.beginPath();
+                ctxLeft.moveTo(lastX, lastY);
+                ctxLeft.lineTo(x, y);
+                ctxLeft.stroke();
+                
+                const mirrorX = leftCanvas.width - x;
+                const mirrorLastX = leftCanvas.width - lastX;
+                ctxRight.globalCompositeOperation = 'destination-out';
+                ctxRight.beginPath();
+                ctxRight.moveTo(mirrorLastX, lastY);
+                ctxRight.lineTo(mirrorX, y);
+                ctxRight.stroke();
+                
+                ctxLeft.globalCompositeOperation = 'source-over';
+                ctxRight.globalCompositeOperation = 'source-over';
+                return;
+            }
+
+            ctxLeft.beginPath();
+            ctxLeft.moveTo(lastX, lastY);
+            ctxLeft.lineTo(x, y);
+            ctxLeft.stroke();
+
+            const mirrorX = leftCanvas.width - x;
+            ctxRight.beginPath();
+            ctxRight.moveTo(leftCanvas.width - lastX, lastY);
+            ctxRight.lineTo(mirrorX, y);
+            ctxRight.stroke();
+
+            [lastX, lastY] = [x, y];
+        }
+
+        function startDrawing(e) {
+            e.preventDefault();
+            isDrawing = true;
+            const pos = getCanvasPosition(e);
+            [lastX, lastY] = [pos.x, pos.y];
+        }
+
+        function endDrawing() {
+            isDrawing = false;
+            ctxLeft.beginPath();
+            ctxRight.beginPath();
+        }
+
+        function addEventListeners() {
+            leftCanvas.addEventListener('mousedown', startDrawing);
+            leftCanvas.addEventListener('mousemove', draw);
+            leftCanvas.addEventListener('mouseup', endDrawing);
+            leftCanvas.addEventListener('mouseleave', endDrawing);
+
+            leftCanvas.addEventListener('touchstart', (e) => startDrawing(e.touches[0]));
+            leftCanvas.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+                draw(e.touches[0]);
+            });
+            leftCanvas.addEventListener('touchend', endDrawing);
+            leftCanvas.addEventListener('touchcancel', endDrawing);
+        }
+
+        document.querySelectorAll('.color-option').forEach(option => {
+            option.addEventListener('click', () => {
+                document.querySelector('.selected').classList.remove('selected');
+                option.classList.add('selected');
+                currentColor = option.dataset.color;
+                isErasing = false;
+                updateDrawingStyle();
+            });
+        });
+
+        const brushSize = document.getElementById('brushSize');
+        const brushSizeValue = document.getElementById('brushSizeValue');
+        brushSize.addEventListener('input', (e) => {
+            const size = e.target.value;
+            brushSizeValue.textContent = `${size}px`;
+            [ctxLeft, ctxRight].forEach(ctx => ctx.lineWidth = size);
+        });
+
+        document.getElementById('eraser').addEventListener('click', () => {
+            isErasing = true;
+            document.getElementById('eraser').style.backgroundColor = '#666';
+            // 切换到橡皮擦模式时，重置画笔样式
+            const brushSize = document.getElementById('brushSize').value;
+            [ctxLeft, ctxRight].forEach(ctx => {
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.lineWidth = brushSize;
+            });
+        });
+
+        function updateDrawingStyle() {
+            [ctxLeft, ctxRight].forEach(ctx => {
+                ctx.strokeStyle = currentColor;
+            });
+        }
+
+        document.getElementById('clearBtn').addEventListener('click', () => {
+            isErasing = false;
+            document.getElementById('eraser').style.backgroundColor = '#ff5722';
+            ctxLeft.clearRect(0, 0, leftCanvas.width, leftCanvas.height);
+            ctxRight.clearRect(0, 0, rightCanvas.width, rightCanvas.height);
+        });
+
+        document.getElementById('foldBtn').addEventListener('click', () => {
+            isErasing = false;
+            document.getElementById('eraser').style.backgroundColor = '#ff5722';
+            rightCanvas.style.transformOrigin = 'left center';
+            rightCanvas.style.transform = 'rotateY(-180deg)';
+            setTimeout(() => rightCanvas.style.transform = 'none', 800);
+        });
+
+        document.getElementById('saveBtn').addEventListener('click', () => {
+            isErasing = false;
+            document.getElementById('eraser').style.backgroundColor = '#ff5722';
+            const tempCanvas = document.createElement('canvas');
+            const tempCtx = tempCanvas.getContext('2d');
+            tempCanvas.width = 1602;
+            tempCanvas.height = 800;
+            
+            tempCtx.drawImage(leftCanvas, 0, 0);
+            tempCtx.fillStyle = '#666';
+            tempCtx.fillRect(800, 0, 4, 800);
+            tempCtx.drawImage(rightCanvas, 802, 0);
+
+            const link = document.createElement('a');
+            link.download = '轴对称图形.png';
+            link.href = tempCanvas.toDataURL('image/png');
+            link.click();
+        });
+
+        addEventListeners();
+        initCanvas();
+    </script>
+</body>
+</html>

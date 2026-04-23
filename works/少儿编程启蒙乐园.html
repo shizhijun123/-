@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>少儿编程启蒙乐园</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* 头部样式 */
+        .header {
+            text-align: center;
+            padding: 30px 20px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #ff6b6b;
+            font-size: 42px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 18px;
+        }
+
+        /* 导航栏 */
+        .nav {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .nav-btn {
+            padding: 12px 25px;
+            background: #4ecdc4;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: bold;
+        }
+
+        .nav-btn:hover {
+            background: #38b0a9;
+            transform: translateY(-3px);
+        }
+
+        .nav-btn.active {
+            background: #ff6b6b;
+        }
+
+        /* 内容卡片 */
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+            display: none;
+        }
+
+        .card.active {
+            display: block;
+        }
+
+        .card h2 {
+            color: #ff6b6b;
+            margin-bottom: 20px;
+            font-size: 28px;
+            text-align: center;
+        }
+
+        .card p {
+            color: #555;
+            font-size: 17px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        /* 编程模块样式 */
+        .code-block {
+            background: #f8f9fa;
+            border-left: 5px solid #4ecdc4;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 10px;
+        }
+
+        .drag-game {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin: 30px 0;
+        }
+
+        .drag-item {
+            padding: 15px 20px;
+            background: #ffeaa7;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: grab;
+            color: #333;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .game-area {
+            width: 100%;
+            height: 150px;
+            border: 3px dashed #4ecdc4;
+            border-radius: 15px;
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 18px;
+        }
+
+        /* 动画小机器人 */
+        .robot {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .robot img {
+            width: 120px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        /* 按钮样式 */
+        .start-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 15px 40px;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .start-btn:hover {
+            background: #ff5252;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <div class="header">
+            <h1>🎮 少儿编程启蒙乐园</h1>
+            <p>快乐学编程，开启创造力！</p>
+        </div>
+
+        <!-- 导航 -->
+        <div class="nav">
+            <button class="nav-btn active" onclick="showPage('home')">首页</button>
+            <button class="nav-btn" onclick="showPage('learn')">编程知识</button>
+            <button class="nav-btn" onclick="showPage('game')">编程小游戏</button>
+            <button class="nav-btn" onclick="showPage('code')">代码块练习</button>
+        </div>
+
+        <!-- 首页内容 -->
+        <div class="card active" id="home">
+            <div class="robot">
+                <img src="https://cdn-icons-png.flaticon.com/512/609/609823.png" alt="编程机器人">
+            </div>
+            <h2>欢迎来到编程乐园！</h2>
+            <p>小朋友们，编程就像玩积木一样有趣！我们可以用代码指挥电脑做各种事情：画画、做游戏、讲故事...</p>
+            <p>在这里，你不需要认识很多字，也不需要复杂的操作，就能轻松学会编程的小秘密哦！</p>
+            <button class="start-btn" onclick="showPage('learn')">开始学习 🚀</button>
+        </div>
+
+        <!-- 编程知识 -->
+        <div class="card" id="learn">
+            <h2>📚 编程小知识</h2>
+            <p><strong>1. 什么是编程？</strong><br>
+            编程就是告诉电脑要做什么，就像给机器人下命令一样！</p>
+            
+            <div class="code-block">
+                <strong>简单命令：</strong><br>
+                向前走 → 转圈圈 → 亮灯
+            </div>
+
+            <p><strong>2. 编程能做什么？</strong><br>
+            ✨ 制作动画片<br>
+            🎮 设计小游戏<br>
+            🎨 画出美丽的图画<br>
+            🤖 控制智能机器人</p>
+
+            <p><strong>3. 最简单的编程规则：</strong><br>
+            一步一步按顺序执行命令，电脑就会乖乖听话啦！</p>
+        </div>
+
+        <!-- 编程小游戏 -->
+        <div class="card" id="game">
+            <h2>🎯 指令小闯关</h2>
+            <p>小朋友，把正确的指令拖到下面的框框里，指挥小猫咪吃到小鱼吧！</p>
+            <p>目标：小猫咪 → 向前走 → 转弯 → 吃到小鱼</p>
+            
+            <div class="drag-game">
+                <div class="drag-item" draggable="true">向前走</div>
+                <div class="drag-item" draggable="true">向左转</div>
+                <div class="drag-item" draggable="true">吃小鱼</div>
+                <div class="drag-item" draggable="true">跳起来</div>
+            </div>
+
+            <div class="game-area" id="dropArea">
+                把指令拖到这里 🎯
+            </div>
+
+            <button class="start-btn" onclick="checkGame()">完成挑战 ✅</button>
+        </div>
+
+        <!-- 代码块练习 -->
+        <div class="card" id="code">
+            <h2>🧩 代码块启蒙</h2>
+            <p>编程就像搭积木，把代码块拼在一起就能完成任务！</p>
+            
+            <div class="code-block">
+                <strong>✨ 我的第一段代码：</strong><br>
+                当点击开始 → 小角色移动 → 说出"你好！"
+            </div>
+
+            <p>小朋友们，这就是最简单的代码啦！不需要写字，拼一拼就能运行！</p>
+            
+            <div class="robot">
+                <img src="https://cdn-icons-png.flaticon.com/512/3097/3097368.png" alt="代码积木">
+            </div>
+
+            <button class="start-btn" onclick="alert('太棒啦！你已经学会编程基础啦！🎉')">我学会啦！</button>
+        </div>
+    </div>
+
+    <script>
+        // 页面切换功能
+        function showPage(pageId) {
+            // 隐藏所有卡片
+            document.querySelectorAll('.card').forEach(card => {
+                card.classList.remove('active');
+            });
+            // 显示选中卡片
+            document.getElementById(pageId).classList.add('active');
+            
+            // 导航按钮高亮
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        // 拖拽游戏基础功能
+        document.querySelectorAll('.drag-item').forEach(item => {
+            item.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setText('command', e.target.innerText);
+            });
+        });
+
+        const dropArea = document.getElementById('dropArea');
+        dropArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+        });
+
+        dropArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const command = e.dataTransfer.getText('command');
+            dropArea.innerHTML += ` ${command} → `;
+        });
+
+        // 游戏检查
+        function checkGame() {
+            alert('恭喜你！成功指挥小猫咪吃到小鱼啦！🎉');
+        }
+    </script>
+</body>
+</html>

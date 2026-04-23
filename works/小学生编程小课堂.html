@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小学生编程小课堂</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "微软雅黑", sans-serif;
+        }
+
+        body {
+            background-color: #f0f9ff;
+            padding: 20px;
+        }
+
+        .box {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .title {
+            text-align: center;
+            color: #2563eb;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn:hover {
+            background: #1d4ed8;
+        }
+
+        .page {
+            display: none;
+            padding: 20px;
+            border-radius: 15px;
+            background: #f8fafc;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .page h2 {
+            color: #dc2626;
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+
+        .page p {
+            font-size: 17px;
+            line-height: 1.6;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .code-box {
+            background: #e0f2fe;
+            border-left: 5px solid #0ea5e9;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        .game-box {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .run-btn {
+            padding: 12px 25px;
+            background: #16a34a;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .light {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #ccc;
+            margin: 20px auto;
+            transition: 0.3s;
+        }
+
+        .light.on {
+            background: #fbbf24;
+            box-shadow: 0 0 20px #fbbf24;
+        }
+
+        .robot-img {
+            display: block;
+            width: 100px;
+            margin: 20px auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="box">
+        <h1 class="title">🤖 小学生编程小课堂</h1>
+        <p class="subtitle">轻松学习，快乐编程</p>
+
+        <div class="btn-group">
+            <button class="btn" onclick="go('home')">首页</button>
+            <button class="btn" onclick="go('learn')">学知识</button>
+            <button class="btn" onclick="go('game')">玩游戏</button>
+            <button class="btn" onclick="go('code')">试代码</button>
+        </div>
+
+        <!-- 首页 -->
+        <div class="page active" id="home">
+            <h2>欢迎来到编程世界！</h2>
+            <p>编程就像给机器人下达命令，非常简单好玩！</p>
+            <p>你可以指挥电脑：走路、发光、说话、做游戏……</p>
+            <img class="robot-img" src="https://cdn-icons-png.flaticon.com/512/1049/1049141.png">
+        </div>
+
+        <!-- 学知识 -->
+        <div class="page" id="learn">
+            <h2>📘 编程小知识</h2>
+            <p>1. 编程 = 给电脑下命令</p>
+            <p>2. 电脑会按照顺序执行命令</p>
+            <p>3. 编程可以做动画、游戏、故事</p>
+            <p>4. 编程能锻炼思考能力和创造力</p>
+
+            <div class="code-box">
+                <strong>指令例子：</strong><br>
+                1. 向前走<br>
+                2. 转一圈<br>
+                3. 说“你好”
+            </div>
+        </div>
+
+        <!-- 玩游戏 -->
+        <div class="page" id="game">
+            <h2>💡 指令小游戏：点亮灯泡</h2>
+            <p>点击按钮，用指令点亮灯泡！</p>
+
+            <div class="game-box">
+                <div class="light" id="lamp"></div>
+                <button class="run-btn" onclick="turnOn()">点亮灯泡</button>
+                <button class="run-btn" onclick="turnOff()">关闭灯泡</button>
+            </div>
+        </div>
+
+        <!-- 试代码 -->
+        <div class="page" id="code">
+            <h2>✅ 我的第一段代码</h2>
+            <p>小朋友，这就是最简单的代码！</p>
+
+            <div class="code-box">
+                当点击开始 → 移动一步 → 说“我会编程啦！”
+            </div>
+
+            <br>
+            <button class="run-btn" onclick="sayHi()">运行代码</button>
+        </div>
+    </div>
+
+    <script>
+        // 页面切换
+        function go(id) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        // 点亮灯泡
+        function turnOn() {
+            document.getElementById('lamp').classList.add('on');
+        }
+
+        function turnOff() {
+            document.getElementById('lamp').classList.remove('on');
+        }
+
+        // 说话
+        function sayHi() {
+            alert("我会编程啦！🎉");
+        }
+    </script>
+</body>
+</html>

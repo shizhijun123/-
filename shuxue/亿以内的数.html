@@ -1,0 +1,356 @@
+<html lang="zh-CN"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大数认识 - 小学数学互动教学</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    
+    <!-- 配置Tailwind自定义颜色和字体 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4F46E5', // 主色调：蓝色
+                        secondary: '#10B981', // 辅助色：绿色
+                        accent: '#F59E0B', // 强调色：橙色
+                        dark: '#1F2937',
+                        grade: '#EF4444' // 分级线颜色：红色
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .number-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .btn-bounce {
+                transition: transform 0.2s ease;
+            }
+            .btn-bounce:active {
+                transform: scale(0.95);
+            }
+            .grade-divider {
+                border-right: 2px dashed theme('colors.grade');
+                margin: 0 6px;
+                height: 1.2em; /* 与数字高度匹配 */
+                display: inline-block;
+                vertical-align: middle;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex flex-col items-center justify-between p-4 md:p-8">
+    <!-- 音效元素 (隐藏在页面中) -->
+    <audio id="start-sound" preload="auto">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-positive-interface-beep-221.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="pause-sound" preload="auto">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-interface-hint-notification-911.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="show-sound" preload="auto">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="reset-sound" preload="auto">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-mechanical-bling-210.mp3" type="audio/mpeg">
+    </audio>
+    
+    <!-- 页面标题 -->
+    <header class="w-full max-w-5xl text-center mb-6 md:mb-10">
+        <h1 class="text-[clamp(1.8rem,5vw,3rem)] font-bold text-primary mb-2">大数认识</h1>
+        <p class="text-gray-600 text-[clamp(1rem,2vw,1.2rem)]">小学数学习互动课堂</p>
+        <p class="text-gray-500 text-sm mt-2">新城道小学 - 石志军</p>
+    </header>
+
+    <!-- 主要内容区 -->
+    <main class="w-full max-w-5xl flex-grow flex flex-col items-center justify-center">
+        <!-- 数字显示区域 -->
+        <div class="w-full bg-white rounded-2xl shadow-xl p-6 md:p-10 mb-10 transform transition-all duration-300 hover:shadow-2xl">
+            <!-- 滚动数字显示 -->
+            <div class="flex justify-center items-center mb-8 overflow-hidden">
+                <div id="number-display" class="text-[clamp(2rem,8vw,5rem)] font-bold text-dark number-shadow tracking-wider text-center transition-all duration-300"></div>
+                <div id="graded-number-display" class="text-[clamp(2rem,8vw,5rem)] font-bold text-dark number-shadow text-center transition-all duration-300 hidden"></div>
+            </div>
+            
+            <!-- 分级写法显示 -->
+            <div id="formatted-display" class="min-h-[80px] flex items-center justify-center text-[clamp(1.2rem,4vw,2rem)] text-primary font-semibold tracking-wide text-center p-4">点击"显示读作"查看数字的中文表达</div>
+        </div>
+        
+        <!-- 控制按钮区域 -->
+        <div class="flex flex-wrap gap-4 md:gap-8 justify-center">
+            <button id="start-btn" class="btn-bounce bg-secondary hover:bg-secondary/90 text-white font-bold py-3 px-8 md:py-4 md:px-10 rounded-full text-lg md:text-xl shadow-lg flex items-center gap-2 transition-all duration-300">
+                <i class="fa fa-play" aria-hidden="true"></i>
+                <span>开始</span>
+            </button>
+            <button id="pause-btn" class="btn-bounce bg-accent hover:bg-accent/90 text-white font-bold py-3 px-8 md:py-4 md:px-10 rounded-full text-lg md:text-xl shadow-lg flex items-center gap-2 transition-all duration-300" disabled="">
+                <i class="fa fa-pause" aria-hidden="true"></i>
+                <span>暂停</span>
+            </button>
+            <button id="show-writing-btn" class="btn-bounce bg-primary hover:bg-primary/90 text-white font-bold py-3 px-8 md:py-4 md:px-10 rounded-full text-lg md:text-xl shadow-lg flex items-center gap-2 transition-all duration-300" disabled="">
+                <i class="fa fa-font" aria-hidden="true"></i>
+                <span>显示读作</span>
+            </button>
+            <button id="reset-btn" class="btn-bounce bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-8 md:py-4 md:px-10 rounded-full text-lg md:text-xl shadow-lg flex items-center gap-2 transition-all duration-300">
+                <i class="fa fa-refresh" aria-hidden="true"></i>
+                <span>重置</span>
+            </button>
+        </div>
+    </main>
+
+    <!-- 页脚信息 -->
+    <footer class="w-full max-w-5xl text-center mt-10 text-gray-500 text-sm">
+        <p>小学数学教学工具 © 2023</p>
+    </footer>
+
+    <script>
+        // 获取音效元素
+        const startSound = document.getElementById('start-sound');
+        const pauseSound = document.getElementById('pause-sound');
+        const showSound = document.getElementById('show-sound');
+        const resetSound = document.getElementById('reset-sound');
+        
+        // 设置音效音量为柔和级别
+        startSound.volume = 0.3;
+        pauseSound.volume = 0.3;
+        showSound.volume = 0.3;
+        resetSound.volume = 0.3;
+        
+        // 获取DOM元素
+        const numberDisplay = document.getElementById('number-display');
+        const gradedNumberDisplay = document.getElementById('graded-number-display');
+        const formattedDisplay = document.getElementById('formatted-display');
+        const startBtn = document.getElementById('start-btn');
+        const pauseBtn = document.getElementById('pause-btn');
+        const showWritingBtn = document.getElementById('show-writing-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        
+        // 变量初始化
+        let isRunning = false;
+        let intervalId = null;
+        let currentNumber = '';
+        
+        // 按照指定概率生成不同级别的数字
+        // 亿级概率40%，万级概率40%，个级概率20%
+        // 最大为千亿级（12位数字）
+        function generateLargeNumber() {
+            const random = Math.random();
+            let length;
+            
+            if (random < 0.4) {
+                // 40%概率生成亿级数字（9-12位）
+                length = Math.floor(Math.random() * 4) + 9;
+            } else if (random < 0.8) {
+                // 40%概率生成万级数字（5-8位）
+                length = Math.floor(Math.random() * 4) + 5;
+            } else {
+                // 20%概率生成个级数字（1-4位）
+                length = Math.floor(Math.random() * 4) + 1;
+            }
+            
+            let number = '';
+            for (let i = 0; i < length; i++) {
+                // 第一位不能为0
+                if (i === 0) {
+                    number += Math.floor(Math.random() * 9) + 1;
+                } else {
+                    number += Math.floor(Math.random() * 10);
+                }
+            }
+            
+            return number;
+        }
+        
+        // 为数字添加分级显示（每四位一级，用红色虚线分隔）
+        function formatNumberWithGrades(numStr) {
+            // 四位数及以下不分级
+            if (numStr.length <= 4) {
+                return numStr;
+            }
+            
+            // 从右向左每四位分组
+            const groups = [];
+            let remaining = numStr;
+            
+            while (remaining.length > 0) {
+                if (remaining.length >= 4) {
+                    groups.unshift(remaining.slice(-4));
+                    remaining = remaining.slice(0, -4);
+                } else {
+                    groups.unshift(remaining);
+                    remaining = '';
+                }
+            }
+            
+            // 用红色虚线分隔各组
+            return groups.join('<span class="grade-divider"></span>');
+        }
+        
+        // 数字转中文大写
+        function numberToChinese(numStr) {
+            const digitChars = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
+            const unitChars = ['', '十', '百', '千', '万', '十', '百', '千', '亿', '十', '百', '千'];
+            
+            let result = '';
+            let zeroFlag = false; // 标记是否有零
+            
+            // 处理空或0的情况
+            if (numStr === '0' || numStr === '') return '零';
+            
+            // 从左到右处理每个数字
+            for (let i = 0; i < numStr.length; i++) {
+                const digit = parseInt(numStr[i]);
+                const position = numStr.length - i - 1; // 位置（从右数）
+                
+                if (digit === 0) {
+                    zeroFlag = true;
+                } else {
+                    if (zeroFlag) {
+                        result += digitChars[0];
+                        zeroFlag = false;
+                    }
+                    result += digitChars[digit] + unitChars[position];
+                }
+                
+                // 处理万亿等单位后重置零标记
+                if (position % 4 === 0 && position > 0) {
+                    zeroFlag = false;
+                }
+            }
+            
+            // 处理十位数的特殊情况（如"十"而不是"一十"）
+            if (result.startsWith('一十')) {
+                result = result.substring(1);
+            }
+            
+            return result;
+        }
+        
+        // 更新显示的数字
+        function updateNumber() {
+            currentNumber = generateLargeNumber();
+            numberDisplay.textContent = currentNumber;
+            // 分级显示区域保持隐藏，只在暂停时显示
+            gradedNumberDisplay.classList.add('hidden');
+            numberDisplay.classList.remove('hidden');
+        }
+        
+        // 开始滚动数字
+        function startRolling() {
+            if (!isRunning) {
+                // 播放开始音效
+                startSound.currentTime = 0;
+                startSound.play();
+                
+                isRunning = true;
+                startBtn.disabled = true;
+                pauseBtn.disabled = false;
+                showWritingBtn.disabled = true;
+                formattedDisplay.textContent = '数字滚动中...';
+                
+                // 初始更新一次
+                updateNumber();
+                
+                // 设置定时器不断更新数字
+                intervalId = setInterval(updateNumber, 100); // 每100毫秒更新一次
+            }
+        }
+        
+        // 暂停滚动
+        function pauseRolling() {
+            if (isRunning) {
+                // 播放暂停音效
+                pauseSound.currentTime = 0;
+                pauseSound.play();
+                
+                isRunning = false;
+                clearInterval(intervalId);
+                startBtn.disabled = false;
+                pauseBtn.disabled = true;
+                showWritingBtn.disabled = false;
+                
+                // 显示分级后的数字
+                const gradedHtml = formatNumberWithGrades(currentNumber);
+                gradedNumberDisplay.innerHTML = gradedHtml;
+                gradedNumberDisplay.classList.remove('hidden');
+                numberDisplay.classList.add('hidden');
+                
+                // 暂停后不显示读作，提示用户点击按钮
+                formattedDisplay.textContent = '点击"显示读作"查看数字的中文表达';
+                
+                // 添加暂停时的动画效果
+                gradedNumberDisplay.classList.add('scale-105', 'text-accent');
+                setTimeout(() => {
+                    gradedNumberDisplay.classList.remove('scale-105', 'text-accent');
+                }, 300);
+            }
+        }
+        
+        // 显示数字读作
+        function showWriting() {
+            if (!isRunning) { // 只有在暂停状态下才能显示
+                // 播放显示写法音效
+                showSound.currentTime = 0;
+                showSound.play();
+                
+                // 在数字写法前添加"读作："前缀
+                formattedDisplay.textContent = `读作：${numberToChinese(currentNumber)}`;
+                showWritingBtn.disabled = true; // 显示后禁用按钮，避免重复点击
+            }
+        }
+        
+        // 重置
+        function reset() {
+            // 播放重置音效
+            resetSound.currentTime = 0;
+            resetSound.play();
+            
+            isRunning = false;
+            clearInterval(intervalId);
+            numberDisplay.textContent = '';
+            gradedNumberDisplay.innerHTML = '';
+            numberDisplay.classList.remove('hidden');
+            gradedNumberDisplay.classList.add('hidden');
+            formattedDisplay.textContent = '点击开始按钮查看滚动的大数';
+            startBtn.disabled = false;
+            pauseBtn.disabled = true;
+            showWritingBtn.disabled = true;
+        }
+        
+        // 绑定事件监听器
+        startBtn.addEventListener('click', startRolling);
+        pauseBtn.addEventListener('click', pauseRolling);
+        showWritingBtn.addEventListener('click', showWriting);
+        resetBtn.addEventListener('click', reset);
+        
+        // 键盘快捷键支持
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                if (isRunning) {
+                    pauseRolling();
+                } else {
+                    startRolling();
+                }
+            } else if (e.code === 'KeyR') {
+                reset();
+            } else if (e.code === 'KeyS' && !isRunning) {
+                // 暂停状态下按S键显示读作
+                e.preventDefault();
+                if (!showWritingBtn.disabled) {
+                    showWriting();
+                }
+            }
+        });
+    </script>
+
+
+</body></html>
